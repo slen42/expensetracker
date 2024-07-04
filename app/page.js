@@ -16,6 +16,8 @@ export default function Tracker() {
   const [user] = useAuthState(auth);
   const router = useRouter()
   const userSession = sessionStorage.getItem('user');
+  // console.log(userSession)
+  // console.log(user)
 
 
   if (!user && !userSession) {
@@ -23,14 +25,16 @@ export default function Tracker() {
   }
 
 
+
   // console.log({user})
+  const itempath = `users/${user?.uid}/items`;
 
   // Add item to database
   const addItem = async (e) => {
     e.preventDefault();
     if (newItem.name !== '' && newItem.price !== '') {
       // setItems([...items, newItem]);
-      await addDoc(collection(db, 'items'), {
+      await addDoc(collection(db, itempath), {
         name: newItem.name.trim(),
         price: newItem.price,
       })
@@ -39,7 +43,7 @@ export default function Tracker() {
 
   // Read items from database
   useEffect(() => {
-    const q = query(collection(db, 'items'));
+    const q = query(collection(db, itempath));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let itemsArr = [];
 
@@ -61,7 +65,7 @@ export default function Tracker() {
 
   // Delete items from database
   const deleteItem = async (id) => {
-    await deleteDoc(doc(db, 'items', id));
+    await deleteDoc(doc(db, itempath, id));
   }
 
   return (
